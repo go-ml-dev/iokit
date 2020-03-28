@@ -58,13 +58,13 @@ func CachedDownload(url string, cached string) (_ io.ReadCloser, err error) {
 		}
 	} else {
 		if f, err = Tempfile("external-noncached-*"); err != nil {
-			return nil, errors.Wrap(err,"could not create temporal file")
+			return nil, errors.Wrap(err, "could not create temporal file")
 		}
 	}
 	err = download(url, f.(io.Writer))
 	if err != nil {
 		_ = f.Close()
-		return nil, errors.Wrap(err, fmt.Sprintf("download error: ",err.Error()))
+		return nil, errors.Wrap(err, fmt.Sprintf("download error: ", err.Error()))
 	}
 	_, _ = f.(io.Seeker).Seek(0, 0)
 	return f, nil

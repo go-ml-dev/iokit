@@ -16,9 +16,3 @@ type Inout interface {
 	Input
 	Output
 }
-
-
-
-
-
-

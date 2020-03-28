@@ -21,4 +21,3 @@ func FileSize(rd io.Reader) int64 {
 	}
 	return 0
 }
-

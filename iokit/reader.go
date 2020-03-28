@@ -23,4 +23,3 @@ func (r reader) Open() (io.ReadCloser, error) {
 func Reader(rd io.Reader, close ...func() error) reader {
 	return reader{rd, close}
 }
-

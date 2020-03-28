@@ -32,4 +32,3 @@ func (w *writer) Commit() (err error) {
 	w.close = nil
 	return
 }
-

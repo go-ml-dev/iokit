@@ -12,4 +12,3 @@ func (c CloserChain) Close() error {
 	}
 	return nil
 }
-

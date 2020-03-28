@@ -42,3 +42,23 @@ func maxi(a int, b ...int) int {
 	return q
 }
 
+func ife(expr bool, x interface{}, y interface{}) interface{} {
+	if expr {
+		return x
+	}
+	return y
+}
+
+func ifei(expr bool, x int, y int) int {
+	if expr {
+		return x
+	}
+	return y
+}
+
+func ifes(expr bool, x string, y string) string {
+	if expr {
+		return x
+	}
+	return y
+}

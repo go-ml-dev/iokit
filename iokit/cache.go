@@ -1,8 +1,6 @@
 package iokit
 
 import (
-	"github.com/sudachen/go-foo/fu"
-	"github.com/sudachen/go-iokit/iokit/internal"
 	"os"
 	"os/user"
 	"path"
@@ -26,13 +24,13 @@ func init() {
 }
 
 func CacheDir(d string) string {
-	r := fu.Ifes(filepath.IsAbs(d), d, path.Join(FullCacheDir, d))
+	r := ifes(filepath.IsAbs(d), d, path.Join(FullCacheDir, d))
 	_ = os.MkdirAll(r, 0777)
 	return r
 }
 
 func CacheFile(f string) string {
-	r := fu.Ifes(filepath.IsAbs(f), f, path.Join(FullCacheDir, f))
+	r := ifes(filepath.IsAbs(f), f, path.Join(FullCacheDir, f))
 	_ = os.MkdirAll(path.Dir(r), 0777)
 	return r
 }

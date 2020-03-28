@@ -27,4 +27,3 @@ func Tempfile(pattern string) (_ io.ReadWriteCloser, err error) {
 	}
 	return &temporary{regular{f}, false}, nil
 }
-
