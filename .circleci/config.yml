@@ -58,7 +58,7 @@ jobs:
     parallelism: 1
 
     environment:
-      CC_TEST_REPORTER_ID: 14bae48c4a1d82ba4b9f60966bd070f4f164abc1ab1e7246b5b606b20ba5f406
+      CC_TEST_REPORTER_ID: 643a82e17ccd558c51faba71c4b529d2ff57033c37a2c7dd87bf4ef13915c03e
 
     steps:
       - checkout
