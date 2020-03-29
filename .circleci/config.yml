@@ -1,0 +1,84 @@
+version: 2.1
+
+orbs:
+  win: circleci/windows@2.2.0 # The Windows orb give you everything you need to start using the Windows executor.
+
+jobs:
+  test-linux:
+    docker:
+      - image: sudachen/go1137-ci
+
+    parallelism: 1
+
+    environment:
+      MXNET_ENFORCE_DETERMINISM: 1
+      OMP_NUM_THREADS: 4
+      MXNET_OMP_MAX_THREADS: 4
+
+    steps:
+      - checkout
+      - run: make build
+      - run: make run-tests-1
+      #- run: /usr/local/bin/cc-test-reporter after-build -t gocov
+
+      - run: make win-build
+      - run: mkdir bin
+      - run: cp tests.exe bin && chmod a+rx bin/tests.exe
+      - run: cp c.out bin/c1.out
+      - persist_to_workspace:
+          root: .
+          paths:
+            - bin
+
+  test-windows:
+    executor: win/default
+    #shell: cmd.exe
+
+    steps:
+      - attach_workspace:
+          at: .\ws
+      - run:
+          command: dir /s
+          shell: cmd.exe
+      - run:
+          command: .\ws\bin\tests.exe -test.v=true -test.coverprofile=c.out
+          shell: cmd.exe
+      - run:
+          command: cp c.out .\ws\bin\c2.out
+          shell: cmd.exe
+      - persist_to_workspace:
+          root: C:\Users\circleci\project\ws
+          paths:
+            - bin
+
+  test-cover:
+    docker:
+      - image: sudachen/go1137-ci
+
+    parallelism: 1
+
+    environment:
+      CC_TEST_REPORTER_ID: 14bae48c4a1d82ba4b9f60966bd070f4f164abc1ab1e7246b5b606b20ba5f406
+
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./ws
+      - run: cp ./ws/bin/c1.out ./c.out
+      - run: tail +2 ./ws/bin/c2.out | tr -d '\r' >> c.out
+      - run: make run-tests-2
+      - run: /usr/local/bin/cc-test-reporter after-build -t gocov
+
+workflows:
+  version: 2
+  test-workflow:
+    jobs:
+      - test-linux
+      - test-windows:
+          requires:
+            - test-linux
+      - test-cover:
+          requires:
+            - test-windows
+
+
