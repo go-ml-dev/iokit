@@ -6,12 +6,13 @@
 
 
 ```golang
- // example uses S3_TEST_URL envronment variable
- // export S3_TEST_URL=s3://id:secret@nyc3.digitaloceanspaces.com/bucket/TEST
+ // it uses S3_*_URL envronment variables
+ // export S3_DOTEST_URL=s3://id:secret@nyc3.digitaloceanspaces.com/bucket/prefix
+ // export S3_AWSTEST_URL=s3://id:secret@s3.us-west-2.amazonaws.com/bucket/prefix
 
 // Write and read back S3 object
 func Test_Example1(t *testing.T) {
-	url := "s3://$test/test_example1.txt"
+	url := "s3://$dotest/test_example1.txt"
 	S := fmt.Sprintf(`Hello world! %d`, rand.Int())
 
 	wh := iokit.Url(url).LuckyCreate()
@@ -27,7 +28,7 @@ func Test_Example1(t *testing.T) {
 
 // Write and read back S3 object
 func Test_Example2(t *testing.T) {
-	url := "s3://$do_test/go-iokit/test_s3path.txt"
+	url := "s3://$awstest/test_example2.txt"
 	S := fmt.Sprintf(`Hello world! %d`, rand.Int())
 
 	wh,err := iokit.Url(url).Create()
