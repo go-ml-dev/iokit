@@ -5,18 +5,44 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
-```
-Copyright 2020 Alexey Sudachen
+```golang
+ // example uses S3_TEST_URL envronment variable
+ // export S3_TEST_URL=s3://id:secret@nyc3.digitaloceanspaces.com/bucket/TEST
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+// Write and read back S3 object
+func Test_Example1(t *testing.T) {
+	url := "s3://$test/test_example1.txt"
+	S := fmt.Sprintf(`Hello world! %d`, rand.Int())
 
-     http://www.apache.org/licenses/LICENSE-2.0
+	wh := iokit.Url(url).LuckyCreate()
+	defer wh.End()
+	wh.LuckyWrite([]byte(S))
+	wh.LuckyCommit()
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+	rd := iokit.Url(url).LuckyOpen()
+	defer rd.LuckyClose()
+	q := rd.LuckyReadAll()
+	assert.Assert(t,string(q)==S)
+}
+
+// Write and read back S3 object
+func Test_Example2(t *testing.T) {
+	url := "s3://$do_test/go-iokit/test_s3path.txt"
+	S := fmt.Sprintf(`Hello world! %d`, rand.Int())
+
+	wh,err := iokit.Url(url).Create()
+	assert.NilError(t,err)
+	defer wh.End()
+	_,err = wh.Write([]byte(S))
+	assert.NilError(t,err)
+	err = wh.Commit()
+	assert.NilError(t,err)
+
+	rd,err := iokit.Url(url).Open()
+	assert.NilError(t,err)
+	defer rd.Close()
+	q,err := ioutil.ReadAll(rd)
+	assert.NilError(t,err)
+	assert.Assert(t,string(q)==S)
+}
 ```

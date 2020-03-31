@@ -5,6 +5,7 @@ import (
 	"gotest.tools/assert"
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -41,3 +42,47 @@ func Test_CreateOpen(t *testing.T) {
 	assert.NilError(t,err)
 	assert.Assert(t, string(x) == S)
 }
+
+func Test_CacheOpen(t *testing.T) {
+	S := `test`
+	file := iokit.Cache("go-iokit/tests/createopen.txt").File()
+	w,err := file.Create()
+	assert.NilError(t,err)
+	defer w.End()
+	_,err = w.Write([]byte(S))
+	assert.NilError(t,err)
+	err = w.Commit()
+	assert.NilError(t,err)
+	r,err := file.Open()
+	assert.NilError(t,err)
+	defer r.Close()
+	x,err := ioutil.ReadAll(r)
+	assert.NilError(t,err)
+	assert.Assert(t, string(x) == S)
+}
+
+func findSkills(s string) []string {
+	j := strings.Index(s,"SKILLS")
+	j = strings.Index(s[j:],"<li>")+j
+	k := strings.Index(s[j:],"</li>")+j
+	return strings.Split(s[j+4:k],", ")
+}
+
+func Test_PathHttp(t *testing.T) {
+	cache := iokit.Cache("go-iokit/test_httppath.txt")
+	cache.Remove()
+	file := iokit.Url("http://sudachen.github.io/cv",cache)
+	r,err := file.Open()
+	assert.NilError(t,err)
+	defer r.Close()
+	x,err := ioutil.ReadAll(r)
+	u := findSkills(string(x))
+	assert.Assert(t,u[0]=="Go")
+	r,err = iokit.Url("file://"+cache.Path()).Open()
+	assert.NilError(t,err)
+	defer r.Close()
+	x,err = ioutil.ReadAll(r)
+	u = findSkills(string(x))
+	assert.Assert(t,u[0]=="Go")
+}
+

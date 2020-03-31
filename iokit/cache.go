@@ -1,6 +1,8 @@
 package iokit
 
 import (
+	"github.com/sudachen/go-iokit/iokit/fu"
+	"io"
 	"os"
 	"os/user"
 	"path"
@@ -24,13 +26,53 @@ func init() {
 }
 
 func CacheDir(d string) string {
-	r := ifes(filepath.IsAbs(d), d, path.Join(FullCacheDir, d))
+	r := fu.Ifes(filepath.IsAbs(d), d, path.Join(FullCacheDir, d))
 	_ = os.MkdirAll(r, 0777)
 	return r
 }
 
 func CacheFile(f string) string {
-	r := ifes(filepath.IsAbs(f), f, path.Join(FullCacheDir, f))
+	r := fu.Ifes(filepath.IsAbs(f), f, path.Join(FullCacheDir, f))
 	_ = os.MkdirAll(path.Dir(r), 0777)
 	return r
+}
+
+type Cache string
+
+func (c Cache) File() Inout {
+	return File(CacheFile(string(c)))
+}
+
+func (c Cache) String() string {
+	return CacheFile(string(c))
+}
+
+func (c Cache) Remove() (err error) {
+	s := CacheFile(string(c))
+	_, err = os.Stat(s)
+	if err == nil {
+		return os.Remove(s)
+	}
+	return nil
+}
+
+func (c Cache) Defined() bool {
+	return string(c) != ""
+}
+
+func (c Cache) Exists() bool {
+	if c.Defined() {
+		if st,err := os.Stat(c.Path()); err == nil && st.Mode().IsRegular() {
+			return true
+		}
+	}
+	return false
+}
+
+func (c Cache) Path() string {
+	return CacheFile(string(c))
+}
+
+func (c Cache) Open() (io.ReadCloser, error) {
+	return File(c.Path()).Open()
 }

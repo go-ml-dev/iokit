@@ -20,7 +20,16 @@ func (tf temporary) Close() error {
 	return nil
 }
 
-func Tempfile(pattern string) (_ io.ReadWriteCloser, err error) {
+func (tf temporary) End() { _ = tf.Close() }
+func (tf temporary) Commit() error { return nil }
+
+type TemporaryFile interface {
+	Whole
+	io.Reader
+	io.Closer
+}
+
+func Tempfile(pattern string) (_ TemporaryFile, err error) {
 	var f *os.File
 	if f, err = ioutil.TempFile("", pattern); err != nil {
 		return

@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"compress/bzip2"
 	"compress/gzip"
+	"github.com/sudachen/go-iokit/iokit/fu"
 	"github.com/ulikunitz/xz"
 	"io"
 	"os"
@@ -55,7 +56,7 @@ func (d *decomp) Read(p []byte) (n int, err error) {
 		}
 		d.count = 0
 	}
-	k := mini(len(p), d.size[d.side]-d.count)
+	k := fu.Mini(len(p), d.size[d.side]-d.count)
 	copy(p[:k], d.buffer[d.side][d.count:d.count+k])
 	d.count += k
 	return k, nil
