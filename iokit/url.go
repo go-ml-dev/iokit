@@ -37,16 +37,16 @@ func Url(url string, opts ...interface{}) LuckyInputOutput {
 	}}
 }
 
-func (p IoUrl) Open() (rd io.ReadCloser, err error) {
-	if p.Schema != "file" {
-		return p.openUrlReader()
+func (iourl IoUrl) Open() (rd io.ReadCloser, err error) {
+	if iourl.Schema != "file" {
+		return iourl.openUrlReader()
 	}
-	return File(p.Url[7:]).Open()
+	return File(iourl.Url[7:]).Open()
 }
 
-func (p IoUrl) Create() (hw Whole, err error) {
-	if p.Schema != "file" {
-		return p.createUrlWriter()
+func (iourl IoUrl) Create() (hw Whole, err error) {
+	if iourl.Schema != "file" {
+		return iourl.createUrlWriter()
 	}
-	return File(p.Url[7:]).Create()
+	return File(iourl.Url[7:]).Create()
 }

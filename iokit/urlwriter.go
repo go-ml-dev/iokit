@@ -49,7 +49,7 @@ func (uw *urlwriter) Commit() (err error) {
 	}
 	defer rd.Close()
 	uw.Whole = nil
-	err = Upload(uw.iourl.Url, rd)
+	err = uw.iourl.Upload(rd)
 	return
 }
 
@@ -70,4 +70,8 @@ func Upload(url string, reader io.Reader) error {
 		//return GcUrl(url).Upload(reader)
 	}
 	return errors.New("can't read from url `" + url + "`")
+}
+
+func (iourl IoUrl) Upload(rd io.Reader) error {
+	return Upload(iourl.Url, rd)
 }

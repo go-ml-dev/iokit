@@ -22,7 +22,7 @@ func (iourl IoUrl) openUrlReader() (rd io.ReadCloser, err error) {
 			f.End()
 		}
 	}()
-	if err = Download(iourl.Url, f); err != nil {
+	if err = iourl.Download(f); err != nil {
 		return
 	}
 	if err = f.Commit(); err != nil {
@@ -57,4 +57,8 @@ func Download(url string, writer io.Writer) error {
 		//return GcUrl(url).Download(writer)
 	}
 	return errors.New("can't read from url `" + url + "`")
+}
+
+func (iourl IoUrl) Download(wr io.Writer) error {
+	return Download(iourl.Url, wr)
 }
