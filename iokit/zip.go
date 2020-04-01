@@ -70,6 +70,9 @@ func (q zipout) Create() (w Whole, err error) {
 	}
 	zw := zip.NewWriter(xf)
 	fw, err := zw.Create(q.FileName)
+	if err != nil {
+		return
+	}
 	return &zipwhole{fw, zw, xf}, nil
 }
 
