@@ -6,6 +6,7 @@ import (
 )
 
 type HttpUrl string
+
 func (url HttpUrl) Download(wr io.Writer) error {
 	resp, err := http.Get(string(url))
 	if err != nil {

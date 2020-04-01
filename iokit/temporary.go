@@ -20,7 +20,7 @@ func (tf temporary) Close() error {
 	return nil
 }
 
-func (tf temporary) End() { _ = tf.Close() }
+func (tf temporary) End()          { _ = tf.Close() }
 func (tf temporary) Commit() error { return nil }
 
 type TemporaryFile interface {

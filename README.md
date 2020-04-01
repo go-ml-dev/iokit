@@ -21,7 +21,7 @@ func Test_Example1(t *testing.T) {
 	wh.LuckyCommit()
 
 	rd := iokit.Url(url).LuckyOpen()
-	defer rd.LuckyClose()
+	defer rd.Close()
 	q := rd.LuckyReadAll()
 	assert.Assert(t,string(q)==S)
 }

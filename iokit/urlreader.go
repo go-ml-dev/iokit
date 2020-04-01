@@ -8,39 +8,53 @@ import (
 )
 
 func (iourl IoUrl) openUrlReader() (rd io.ReadCloser, err error) {
-	if iourl.Cache.Exists(){
+	if iourl.Cache.Exists() {
 		return iourl.Cache.Open()
 	}
 	var f Whole
 	if iourl.Cache.Defined() {
-		f,err = File(iourl.Cache.Path()+"~").Create()
+		f, err = File(iourl.Cache.Path() + "~").Create()
 	} else {
-		f,err = Tempfile("url-noncached-*")
+		f, err = Tempfile("url-noncached-*")
 	}
-	defer func(){ if f != nil { f.End() } }()
-	if err = Download(iourl.Url,f); err != nil { return }
-	if err = f.Commit(); err != nil { return }
+	defer func() {
+		if f != nil {
+			f.End()
+		}
+	}()
+	if err = Download(iourl.Url, f); err != nil {
+		return
+	}
+	if err = f.Commit(); err != nil {
+		return
+	}
 	if iourl.Cache.Defined() {
 		// file was closed in Commit call
-		if err = os.Rename(iourl.Cache.Path()+"~",iourl.Cache.Path()); err != nil { return }
-		if rd, err = File(iourl.Cache.Path()).Open(); err != nil { return }
+		if err = os.Rename(iourl.Cache.Path()+"~", iourl.Cache.Path()); err != nil {
+			return
+		}
+		if rd, err = File(iourl.Cache.Path()).Open(); err != nil {
+			return
+		}
 	} else {
 		rd = f.(io.ReadWriteCloser)
-		if _,err = rd.(io.Seeker).Seek(0,0); err != nil { return }
+		if _, err = rd.(io.Seeker).Seek(0, 0); err != nil {
+			return
+		}
 		f = nil // do not close tempfile, it will be removed on close later
 	}
 	return
 }
 
 func Download(url string, writer io.Writer) error {
-	j := strings.Index(url,"://")
+	j := strings.Index(url, "://")
 	switch strings.ToLower(url[:j]) {
-	case "http","https":
+	case "http", "https":
 		return HttpUrl(url).Download(writer)
 	case "s3":
 		return S3Url(url).Download(writer)
 	case "gc":
 		//return GcUrl(url).Download(writer)
 	}
-	return errors.New("can't read from url `"+url+"`")
+	return errors.New("can't read from url `" + url + "`")
 }

@@ -62,7 +62,7 @@ func (c Cache) Defined() bool {
 
 func (c Cache) Exists() bool {
 	if c.Defined() {
-		if st,err := os.Stat(c.Path()); err == nil && st.Mode().IsRegular() {
+		if st, err := os.Stat(c.Path()); err == nil && st.Mode().IsRegular() {
 			return true
 		}
 	}
@@ -75,4 +75,12 @@ func (c Cache) Path() string {
 
 func (c Cache) Open() (io.ReadCloser, error) {
 	return File(c.Path()).Open()
+}
+
+func (c Cache) LuckyOpen() LuckyReader {
+	rd, err := c.Open()
+	if err != nil {
+		panic(err)
+	}
+	return LuckyReader{rd}
 }

@@ -66,4 +66,3 @@ func Ifes(expr bool, x string, y string) string {
 func Fvs(a ...interface{}) string {
 	return a[0].(string)
 }
-
