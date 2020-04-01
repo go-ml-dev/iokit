@@ -13,14 +13,24 @@ type Output interface {
 	Create() (Whole, error)
 }
 
-type Inout interface {
+type InputOutput interface {
 	Input
 	Output
 }
 
-type InoutExt struct{ Inout }
+type LuckyInputOutput struct{ InputOutput }
 
-func (iox InoutExt) LuckyCreate() LuckyWhole {
+func (iox LuckyInputOutput) LuckyCreate() LuckyWhole {
+	return LuckyOutput{iox.InputOutput}.LuckyCreate()
+}
+
+func (iox LuckyInputOutput) LuckyOpen() LuckyReader {
+	return LuckyInput{iox.InputOutput}.LuckyOpen()
+}
+
+type LuckyOutput struct{ Output }
+
+func (iox LuckyOutput) LuckyCreate() LuckyWhole {
 	wr, err := iox.Create()
 	if err != nil {
 		panic(err)
@@ -42,7 +52,9 @@ func (lr LuckyWhole) LuckyCommit() {
 	}
 }
 
-func (iox InoutExt) LuckyOpen() LuckyReader {
+type LuckyInput struct{ Input }
+
+func (iox LuckyInput) LuckyOpen() LuckyReader {
 	rd, err := iox.Open()
 	if err != nil {
 		panic(err)

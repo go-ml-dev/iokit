@@ -39,7 +39,7 @@ func CacheFile(f string) string {
 
 type Cache string
 
-func (c Cache) File() Inout {
+func (c Cache) File() InputOutput {
 	return File(CacheFile(string(c)))
 }
 

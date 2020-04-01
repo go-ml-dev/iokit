@@ -4,25 +4,20 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
-	"os"
 )
 
-type ZipFile_ struct {
-	Arch     interface{}
+type zipfile struct {
+	Arch     Input
 	FileName string
 }
 
-func ZipFile(fileName string, arch interface{}) ZipFile_ {
-	return ZipFile_{arch, fileName}
+func ZipFile(fileName string, arch Input) LuckyInput {
+	return LuckyInput{zipfile{arch, fileName}}
 }
 
-func (q ZipFile_) Open() (f io.ReadCloser, err error) {
+func (q zipfile) Open() (f io.ReadCloser, err error) {
 	var xf io.ReadCloser
-	if e, ok := q.Arch.(Input); ok {
-		xf, err = e.Open()
-	} else {
-		xf, err = os.Open(q.Arch.(string))
-	}
+	xf, err = q.Arch.Open()
 	if err != nil {
 		return
 	}
@@ -50,4 +45,39 @@ func (q ZipFile_) Open() (f io.ReadCloser, err error) {
 		}
 	}
 	return nil, fmt.Errorf("zip archive does not contain file " + q.FileName)
+}
+
+type zipout struct {
+	Arch     Output
+	FileName string
+}
+
+func Zip(fileName string, arch Output) LuckyOutput {
+	return LuckyOutput{zipout{arch, fileName}}
+}
+
+type zipwhole struct {
+	io.Writer
+	zw *zip.Writer
+	f  Whole
+}
+
+func (q zipout) Create() (w Whole, err error) {
+	var xf Whole
+	xf, err = q.Arch.Create()
+	if err != nil {
+		return
+	}
+	zw := zip.NewWriter(xf)
+	fw, err := zw.Create(q.FileName)
+	return &zipwhole{fw, zw, xf}, nil
+}
+
+func (z *zipwhole) End() {
+	z.f.End()
+}
+
+func (z *zipwhole) Commit() error {
+	z.zw.Close()
+	return z.f.Commit()
 }

@@ -5,34 +5,22 @@ import (
 	"os"
 )
 
-type File string
+func File(path string) LuckyInputOutput {
+	return LuckyInputOutput{file(path)}
+}
 
-func (f File) Open() (io.ReadCloser, error) {
+type file string
+
+func (f file) Open() (io.ReadCloser, error) {
 	return os.Open(string(f))
 }
 
-func (f File) LuckyOpen() LuckyReader {
-	rd, err := f.Open()
-	if err != nil {
-		panic(err)
-	}
-	return LuckyReader{rd}
-}
-
-func (f File) Create() (Whole, error) {
+func (f file) Create() (Whole, error) {
 	x, err := os.Create(string(f))
 	if err != nil {
 		return nil, err
 	}
 	return &whole{regular{x}}, nil
-}
-
-func (f File) LuckyCreate() LuckyWhole {
-	x, err := f.Create()
-	if err != nil {
-		panic(err)
-	}
-	return LuckyWhole{x}
 }
 
 type regular struct {

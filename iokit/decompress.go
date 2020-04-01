@@ -11,6 +11,34 @@ import (
 	"os"
 )
 
+type compressed struct{ input interface{} }
+
+func Compressed(arch interface{}) LuckyInput {
+	return LuckyInput{compressed{arch}}
+}
+
+func (q compressed) Open() (f io.ReadCloser, err error) {
+	var xf io.ReadCloser
+	if e, ok := q.input.(Input); ok {
+		xf, err = e.Open()
+	} else {
+		xf, err = os.Open(q.input.(string))
+	}
+	if err != nil {
+		return
+	}
+	dc := decompress(xf)
+	return Reader(dc.Run(),
+		func() error {
+			e := dc.Close()
+			err := xf.Close()
+			if e != nil {
+				return e
+			}
+			return err
+		}), nil
+}
+
 const decompressorBufferSize = 32 * 1024
 
 type errReader struct{ err error }
@@ -135,27 +163,4 @@ func decompress(rd io.Reader) *decomp {
 		}
 		return decompressor(qr, false)
 	}
-}
-
-type Compressed_ struct{ input interface{} }
-
-func Compressed(arch interface{}) Compressed_ { return Compressed_{arch} }
-
-func (q Compressed_) Open() (f io.ReadCloser, err error) {
-	var xf io.ReadCloser
-	if e, ok := q.input.(Input); ok {
-		xf, err = e.Open()
-	} else {
-		xf, err = os.Open(q.input.(string))
-	}
-	dc := decompress(xf)
-	return Reader(dc.Run(),
-		func() error {
-			e := dc.Close()
-			err := xf.Close()
-			if e != nil {
-				return e
-			}
-			return err
-		}), nil
 }

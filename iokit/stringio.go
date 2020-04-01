@@ -5,9 +5,12 @@ import (
 	"io"
 )
 
-type StringIO string
+type stringIO string
 
-func (s StringIO) Open() (io.ReadCloser, error) {
-	return reader{bytes.NewBufferString(string(s)), nil},
-		nil
+func StringIO(str string) LuckyInput {
+	return LuckyInput{stringIO(str)}
+}
+
+func (s stringIO) Open() (io.ReadCloser, error) {
+	return reader{bytes.NewBufferString(string(s)), nil}, nil
 }

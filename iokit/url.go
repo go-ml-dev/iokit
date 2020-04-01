@@ -21,13 +21,13 @@ type LiveStream bool
 
 const Streamed = LiveStream(true)
 
-func Url(url string, opts ...interface{}) InoutExt {
+func Url(url string, opts ...interface{}) LuckyInputOutput {
 	lurl := strings.ToLower(url)
 	schema := ""
 	if j := strings.Index(lurl, "://"); j > 0 {
 		schema = lurl[:j]
 	}
-	return InoutExt{IoUrl{
+	return LuckyInputOutput{IoUrl{
 		url,
 		schema,
 		fu.Option(LiveStream(false), opts).Interface().(LiveStream),

@@ -15,6 +15,9 @@ func FileSize(rd io.Reader) int64 {
 	}
 	if f, ok := rd.(*os.File); ok {
 		st, err := f.Stat()
+		if err != nil { // wine workaround
+			st, err = os.Stat(f.Name())
+		}
 		if err == nil {
 			return st.Size()
 		}

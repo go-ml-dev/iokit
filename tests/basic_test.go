@@ -1,13 +1,22 @@
 package tests
 
 import (
+	"fmt"
 	"github.com/sudachen/go-iokit/iokit"
 	"gotest.tools/assert"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"strings"
 	"testing"
 )
+
+func Test_Version(t *testing.T) {
+	assert.Assert(t, iokit.Version.Major() == 1)
+	assert.Assert(t, iokit.Version.Minor() == 0)
+	assert.Assert(t, iokit.Version.Patch() == 0)
+	assert.Assert(t, iokit.Version.String() == "1.0.0")
+}
 
 func Test_Open(t *testing.T) {
 	S := `test`
@@ -88,4 +97,10 @@ func Test_PathHttp(t *testing.T) {
 	x, err = ioutil.ReadAll(r)
 	u = findSkills(string(x))
 	assert.Assert(t, u[0] == "Go")
+}
+
+func Test_StringIO(t *testing.T) {
+	S := fmt.Sprintf(`test text %v`, rand.Int())
+	r := iokit.StringIO(S).LuckyOpen()
+	assert.Assert(t, S == string(r.LuckyReadAll()))
 }
