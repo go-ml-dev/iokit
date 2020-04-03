@@ -47,5 +47,5 @@ func Decrypt(password string, data []byte) ([]byte, error) {
 	if len(data) != int(ln) || sha1.Sum(data) != sha {
 		return nil, errors.New("encrypted data corrupted")
 	}
-	return bf.Bytes()[:int(ln)], nil
+	return data, nil
 }
