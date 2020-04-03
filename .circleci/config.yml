@@ -43,7 +43,7 @@ jobs:
           command: dir /s
           shell: cmd.exe
       - run:
-          command: mkdir \tmp && cp .\ws\bin\gs-creds.json.enc \tmp
+          command: cp .\ws\bin\gs-creds.json.enc \tmp
           shell: cmd.exe
       - run:
           command: .\ws\bin\tests.exe -test.v=true -test.coverprofile=c.out
