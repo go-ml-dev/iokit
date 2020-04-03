@@ -121,7 +121,7 @@ func defineAccessPoint(gsdef string) (ap *AccessPoint, err error) {
 		ap.Credentials, err = google.CredentialsFromJSON(context.Background(), dat, storage.DevstorageReadWriteScope)
 		return
 	}
-	return nil, errors.New("invalid access pointdefinition (no gs:// prefix)")
+	return nil, errors.New("invalid access pointdefinition (no json:// prefix)")
 }
 
 func (ap *AccessPoint) Service() (svc *storage.Service, err error) {

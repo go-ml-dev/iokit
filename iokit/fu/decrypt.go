@@ -2,32 +2,50 @@ package fu
 
 import (
 	"bytes"
+	"compress/gzip"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/sha1"
 	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/binary"
+	"github.com/pkg/errors"
 	"io"
 )
 
 func Decrypt(password string, data []byte) ([]byte, error) {
-	key := sha256.Sum256([]byte(password))
+	key := sha512.Sum512([]byte(password))
 	ds := bytes.NewReader(data)
-	iv := make([]byte, aes.BlockSize)
-	if _, err := io.ReadFull(ds, iv); err != nil {
+	ivx := make([]byte, aes.BlockSize*2)
+	if _, err := io.ReadFull(ds, ivx[:aes.BlockSize]); err != nil {
 		return nil, err
 	}
-	block, err := aes.NewCipher(key[:])
+	sha := [20]byte{}
+	if _, err := io.ReadFull(ds, sha[:]); err != nil {
+		return nil, err
+	}
+	copy(ivx[aes.BlockSize:], key[sha512.Size-aes.BlockSize:])
+	iv := sha256.Sum256(ivx)
+	block, err := aes.NewCipher(key[:aes.BlockSize])
 	if err != nil {
 		return nil, err
 	}
 	bf := bytes.Buffer{}
-	rd := &cipher.StreamReader{S: cipher.NewOFB(block, iv), R: ds}
+	rd := &cipher.StreamReader{S: cipher.NewOFB(block, iv[:aes.BlockSize]), R: ds}
 	var ln uint32
 	if err := binary.Read(rd, binary.LittleEndian, &ln); err != nil {
 		return nil, err
 	}
-	if _, err := io.Copy(&bf, rd); err != nil {
+	gr, err := gzip.NewReader(rd)
+	if err != nil {
 		return nil, err
+	}
+	if _, err := io.Copy(&bf, gr); err != nil {
+		return nil, err
+	}
+	data = bf.Bytes()
+	if len(data) != int(ln) || sha1.Sum(data) != sha {
+		return nil, errors.New("encrypted data corrupted")
 	}
 	return bf.Bytes()[:int(ln)], nil
 }
