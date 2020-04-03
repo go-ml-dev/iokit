@@ -9,7 +9,6 @@ import (
 type IoUrl struct {
 	Url      string
 	Schema   string
-	Streamed LiveStream
 	Cache    Cache
 	Observer AsyncUpload
 	Metadata Metadata
@@ -17,9 +16,6 @@ type IoUrl struct {
 
 type Metadata map[string]string
 type AsyncUpload struct{ Notify func(url string, err error) }
-type LiveStream bool
-
-const Streamed = LiveStream(true)
 
 func Url(url string, opts ...interface{}) LuckyInputOutput {
 	lurl := strings.ToLower(url)
@@ -30,7 +26,6 @@ func Url(url string, opts ...interface{}) LuckyInputOutput {
 	return LuckyInputOutput{IoUrl{
 		url,
 		schema,
-		fu.Option(LiveStream(false), opts).Interface().(LiveStream),
 		fu.Option(Cache(""), opts).Interface().(Cache),
 		fu.Option(AsyncUpload{nil}, opts).Interface().(AsyncUpload),
 		fu.Option(Metadata(nil), opts).Interface().(Metadata),

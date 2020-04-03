@@ -7,16 +7,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/pkg/errors"
-	"github.com/sudachen/go-iokit/iokit/fu"
 	"io"
 	"net/url"
-	"os"
 	"strings"
 )
-
-func init() {
-	RegisterEnvironURLs(true)
-}
 
 /*
 	S3_*_URL => ...
@@ -25,40 +19,14 @@ func init() {
 	S3_DEFAULT_URL = s3://key2:secret2@region2.entrypoint/prefix2
 	s3://$default/xxx => Lookup("default") => AccessPoint{entrypoint,region2,prefix2,{key2,secret2}} + xxx
 */
-func RegisterEnvironURLs(verbose bool) {
-	for _, v := range os.Environ() {
-		j := strings.Index(v, "=")
-		if j > 0 {
-			n := strings.ToLower(v[:j])
-			if !strings.HasPrefix(n, "s3_") || !strings.HasSuffix(n, "_url") {
-				continue
-			}
-			u, err := url.Parse(v[j+1:])
-			if err != nil {
-				// vrebose
-				continue
-			}
-			ap, err := DecodeUrl(u)
-			if err != nil {
-				// vrebose
-				continue
-			}
-			ep := ""
-			if n != "s3_url" {
-				ep = n[3 : len(n)-4]
-			}
-			Register(ep, ap)
-		}
-	}
-	return
-}
 
-func DecodeUrl(u *url.URL) (ap AccessPoint, err error) {
+func DecodeUrl(u *url.URL) (ap *AccessPoint, err error) {
 	p := u.Path
 	for len(p) > 0 && p[0] == '/' {
 		p = p[1:]
 	}
 	j := strings.Index(p, "/")
+	ap = &AccessPoint{}
 	if j < 0 {
 		ap.Bucket = p
 	} else {
@@ -66,7 +34,7 @@ func DecodeUrl(u *url.URL) (ap AccessPoint, err error) {
 		ap.Prefix = p[j+1:]
 	}
 	if ap.Bucket == "" {
-		return ap, errors.New("bad bucket name in path `" + u.Path + "`")
+		return nil, errors.New("bad bucket name in path `" + u.Path + "`")
 	}
 	hs := strings.Split(u.Host, ".")
 	if len(hs) > 2 {
@@ -76,7 +44,11 @@ func DecodeUrl(u *url.URL) (ap AccessPoint, err error) {
 		ap.Region = hs[0]
 	}
 	ap.Endpoint = u.Host
-	ap.Credentials = credentials.NewStaticCredentials(u.User.Username(), fu.Fvs(u.User.Password()), "")
+	if pwd, ok := u.User.Password(); !ok {
+		ap.Credentials = credentials.NewCredentials(&credentials.SharedCredentialsProvider{})
+	} else {
+		ap.Credentials = credentials.NewStaticCredentials(u.User.Username(), pwd, "")
+	}
 	return
 }
 

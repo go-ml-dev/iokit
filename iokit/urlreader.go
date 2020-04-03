@@ -53,8 +53,8 @@ func Download(url string, writer io.Writer) error {
 		return HttpUrl(url).Download(writer)
 	case "s3":
 		return S3Url(url).Download(writer)
-	case "gc":
-		//return GcUrl(url).Download(writer)
+	case "gs":
+		return GsUrl(url).Download(writer)
 	}
 	return errors.New("can't read from url `" + url + "`")
 }

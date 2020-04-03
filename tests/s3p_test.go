@@ -11,6 +11,7 @@ import (
 
 /*
 	S3 tests use S3_AWS_TEST_URL and S3_DO_TEST_URL environment variables
+	S3_name_URL = s3://key:secret@region.endpoint/bucket/prefix
 */
 
 func Test_S3Path1(t *testing.T) {

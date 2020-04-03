@@ -62,12 +62,10 @@ func (uw *urlwriter) End() {
 func Upload(url string, reader io.Reader) error {
 	j := strings.Index(url, "://")
 	switch strings.ToLower(url[:j]) {
-	//case "http","https":
-	//	return HttpUrl(url).Upload(reader)
 	case "s3":
 		return S3Url(url).Upload(reader)
-	case "gc":
-		//return GcUrl(url).Upload(reader)
+	case "gs":
+		return GsUrl(url).Upload(reader)
 	}
 	return errors.New("can't read from url `" + url + "`")
 }

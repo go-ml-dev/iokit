@@ -17,6 +17,7 @@ jobs:
 
     steps:
       - checkout
+      - run: cp .circleci/gs-creds.json.enc /tmp/gs-creds.json.enc
       - run: make build
       - run: make run-tests-1
       #- run: /usr/local/bin/cc-test-reporter after-build -t gocov
@@ -25,6 +26,7 @@ jobs:
       - run: mkdir bin
       - run: cp tests.exe bin && chmod a+rx bin/tests.exe
       - run: cp c.out bin/c1.out
+      - run: cp .circleci/gs-creds.json.enc bin/gs-creds.json.enc
       - persist_to_workspace:
           root: .
           paths:
@@ -39,6 +41,9 @@ jobs:
           at: .\ws
       - run:
           command: dir /s
+          shell: cmd.exe
+      - run:
+          command: mkdir \tmp && cp .\ws\bin\gs-creds.json.enc \tmp
           shell: cmd.exe
       - run:
           command: .\ws\bin\tests.exe -test.v=true -test.coverprofile=c.out

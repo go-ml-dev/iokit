@@ -4,6 +4,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"net/url"
+	"os"
 	"strings"
 	"sync"
 )
@@ -31,20 +33,45 @@ func Register(ep string, ap AccessPoint) {
 	mu.Unlock()
 }
 
-func Lookup(ep string) (*AccessPoint, bool) {
+func Lookup(ep string) (ap *AccessPoint, ok bool) {
 	mu.Lock()
 	defer mu.Unlock()
-	ap, ok := registry[strings.ToLower(ep)]
-	return ap, ok
+	ep = strings.ToLower(ep)
+	ap = registry[ep]
+	if ap == nil {
+		nx := "s3_" + ep + "_url"
+		if ep == "" {
+			nx = "s3_url"
+		}
+		for _, v := range os.Environ() {
+			j := strings.Index(v, "=")
+			if j > 0 && strings.ToLower(v[:j]) == nx {
+				u, err := url.Parse(v[j+1:])
+				if err != nil {
+					return nil, false
+				}
+				ap, err = DecodeUrl(u)
+				if err != nil {
+					return nil, false
+				}
+				registry[ep] = ap
+				break
+			}
+		}
+	}
+	return ap, ap != nil
 }
 
 func (ap *AccessPoint) Session() (ssn *session.Session, err error) {
+	mu.Lock()
+	defer mu.Unlock()
 	if ap.session != nil {
 		return ap.session, nil
 	}
-	return session.NewSession(&aws.Config{
+	ap.session, err = session.NewSession(&aws.Config{
 		Endpoint:    &ap.Endpoint,
 		Region:      &ap.Region,
 		Credentials: ap.Credentials,
 	})
+	return ap.session, err
 }
