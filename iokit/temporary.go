@@ -27,6 +27,20 @@ type TemporaryFile interface {
 	Whole
 	io.Reader
 	io.Closer
+	Truncate() error
+	Reset() error
+}
+
+func (tf temporary) Truncate() error {
+	if err := tf.Reset(); err != nil {
+		return err
+	}
+	return tf.File.Truncate(0)
+}
+
+func (tf temporary) Reset() error {
+	_, err := tf.File.Seek(0, 0)
+	return err
 }
 
 func Tempfile(pattern string) (_ TemporaryFile, err error) {
