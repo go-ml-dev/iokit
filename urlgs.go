@@ -1,7 +1,7 @@
 package iokit
 
 import (
-	"github.com/sudachen/go-iokit/iokit/gcp"
+	"go-ml.dev/pkg/iokit/gcp"
 	"io"
 )
 

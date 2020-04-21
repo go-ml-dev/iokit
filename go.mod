@@ -1,4 +1,4 @@
-module github.com/sudachen/go-iokit
+module go-ml.dev/pkg/iokit
 
 go 1.13
 

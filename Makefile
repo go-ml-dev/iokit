@@ -18,8 +18,8 @@ run-tests-1:
 	./tests.test -test.v=true -test.coverprofile=c.out
 
 run-tests-2:
-	sed -i -e 's:github.com/sudachen/go-iokit/::g' c.out
-	awk '/\.go/{print "github.com/sudachen/go-iokit/"$$0}/^mode/{print $$0}' < c.out > gocov.txt
+	sed -i -e 's:go-ml.dev/pkg/iokit/::g' c.out
+	awk '/\.go/{print "go-ml.dev/pkg/iokit/"$$0}/^mode/{print $$0}' < c.out > gocov.txt
 
 run-tests: run-tests-1 run-tests-2
 

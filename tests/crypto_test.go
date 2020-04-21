@@ -2,7 +2,7 @@ package tests
 
 import (
 	"crypto/rand"
-	"github.com/sudachen/go-iokit/iokit/fu"
+	"go-ml.dev/pkg/iokit/fu"
 	"gotest.tools/assert"
 	"testing"
 )

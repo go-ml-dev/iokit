@@ -2,7 +2,7 @@ package tests
 
 import (
 	"fmt"
-	"github.com/sudachen/go-iokit/iokit"
+	"go-ml.dev/pkg/iokit"
 	"gotest.tools/assert"
 	"io/ioutil"
 	"math/rand"

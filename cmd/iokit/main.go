@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/sudachen/go-iokit/iokit"
-	"github.com/sudachen/go-iokit/iokit/fu"
 	"github.com/urfave/cli/v2"
+	"go-ml.dev/pkg/iokit"
+	"go-ml.dev/pkg/iokit/fu"
 	"log"
 	"os"
 )

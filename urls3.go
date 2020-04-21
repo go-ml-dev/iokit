@@ -1,7 +1,7 @@
 package iokit
 
 import (
-	"github.com/sudachen/go-iokit/iokit/s3p"
+	"go-ml.dev/pkg/iokit/s3p"
 	"io"
 )
 

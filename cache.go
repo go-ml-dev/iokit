@@ -1,7 +1,7 @@
 package iokit
 
 import (
-	"github.com/sudachen/go-iokit/iokit/fu"
+	"go-ml.dev/pkg/iokit/fu"
 	"io"
 	"os"
 	"os/user"

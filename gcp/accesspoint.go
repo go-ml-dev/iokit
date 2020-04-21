@@ -3,7 +3,7 @@ package gcp
 import (
 	"context"
 	"github.com/pkg/errors"
-	"github.com/sudachen/go-iokit/iokit/fu"
+	"go-ml.dev/pkg/iokit/fu"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/storage/v1"

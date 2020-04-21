@@ -5,8 +5,8 @@ import (
 	"bytes"
 	"compress/bzip2"
 	"compress/gzip"
-	"github.com/sudachen/go-iokit/iokit/fu"
 	"github.com/ulikunitz/xz"
+	"go-ml.dev/pkg/iokit/fu"
 	"io"
 	"os"
 )
