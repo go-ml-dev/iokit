@@ -1,7 +1,7 @@
-[![CircleCI](https://circleci.com/gh/sudachen/go-iokit.svg?style=svg)](https://circleci.com/gh/sudachen/go-iokit)
-[![Maintainability](https://api.codeclimate.com/v1/badges/9f73e3387f39f92b5169/maintainability)](https://codeclimate.com/github/sudachen/go-iokit/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/9f73e3387f39f92b5169/test_coverage)](https://codeclimate.com/github/sudachen/go-iokit/test_coverage)
-[![Go Report Card](https://goreportcard.com/badge/github.com/sudachen/go-iokit)](https://goreportcard.com/report/github.com/sudachen/go-iokit)
+[![CircleCI](https://circleci.com/gh/go-ml-dev/iokit.svg?style=svg)](https://circleci.com/gh/go-ml-dev/iokit)
+[![Maintainability](https://api.codeclimate.com/v1/badges/8697f28f706fe04ac59e/maintainability)](https://codeclimate.com/github/go-ml-dev/iokit/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/8697f28f706fe04ac59e/test_coverage)](https://codeclimate.com/github/go-ml-dev/iokit/test_coverage)
+[![Go Report Card](https://goreportcard.com/badge/github.com/go-ml-dev/iokit)](https://goreportcard.com/report/github.com/go-ml-dev/iokit)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 
